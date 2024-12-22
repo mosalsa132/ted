@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تشغيل فيديوهات متزامنة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- إضافة Font Awesome -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            color: white; /* لون النص */
+            animation: backgroundChange 30s infinite alternate; /* تغيير السرعة هنا */
+        }
+
+        @keyframes backgroundChange {
+            0% { background-color: red; }
+            25% { background-color: blue; }
+            50% { background-color: green; }
+            75% { background-color: orange; }
+            100% { background-color: purple; }
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .video-container {
+            display: flex;
+            flex-direction: column; /* عرض الفيديوهات في عمود */
+            align-items: center;
+            gap: 20px; /* المسافة بين الفيديوهات */
+        }
+        video, iframe {
+            width: 100%;
+            max-width: 560px; /* يمكنك تعديل الحجم حسب الحاجة */
+            margin: 10px 0;
+        }
+        img {
+            max-width: 10%; /* تأكد من تناسب الصورة مع الشاشة */
+            height: auto; /* الحفاظ على النسبة */
+            margin-bottom: 20px; /* مسافة بين الصورة والعنوان */
+        }
+        .controls {
+            display: flex;
+            gap: 10px; /* المسافة بين الأزرار */
+            align-items: center; /* محاذاة العناصر في المنتصف */
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff; /* لون أزرق */
+            color: white; /* لون النص */
+            border: none;
+            border-radius: 5px; /* زوايا مستديرة */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s; /* تأثير سلس */
+            font-size: 16px; /* حجم الخط */
+            display: flex; /* جعل الأزرار مرنة */
+            align-items: center; /* محاذاة الأيقونات والنص */
+        }
+        .button i { /* تنسيق الأيقونات */
+            margin-right: 5px; /* مسافة بين الأيقونة والنص */
+        }
+        .button:hover {
+            background-color: #0056b3; /* لون أزرق أغمق عند التمرير */
+            transform: scale(1.05); /* تكبير عند التمرير */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- إضافة صورة محلية -->
+
+    <h1>مسلسل حكاية حورية الحلقة 10</h1>
+     
+    <div class="video-container">
+        <!-- فيديو MP4 في الأعلى -->
+        <video id="mp4Video" poster="cover.jpg" autoplay>
+            <source src="https://firebasestorage.googleapis.com/v0/b/project-2815293220407416835.appspot.com/o/10.12%2Fasali%20S01E15.mp4?alt=media&token=90170d89-80fe-41dc-8fa7-49d711a35e9d" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+        <div class="controls">
+            <button id="togglePlay" class="button"><i class="fas fa-play"></i></button>
+            <button id="rewind" class="button"><i class="fas fa-undo"></i></button>
+            <button id="fastForward" class="button"><i class="fas fa-redo"></i></button>
+            <span id="currentTime">0:00 / 0:00</span> <!-- مؤشر زمني -->
+            <button id="fullscreen" class="button"><i class="fas fa-expand"></i></button>
+        </div>
+        <div class="description">
+            تفاصيل إضافية
+            ... <!-- تفاصيل إضافية هنا -->
+        </div>
+    </div>
+
+    <!-- تكرار فيديو يوتيوب -->
+    <div class="youtube-videos">
+        <iframe id="youtubeVideo1" src="https://www.youtube.com/embed/cPmlSbU-HsE?enablejsapi=1&mute=1" title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtubeVideo2" src="https://www.youtube.com/embed/cPmlSbU-HsE?enablejsapi=1&mute=1" title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtubeVideo3" src="https://www.youtube.com/embed/cPmlSbU-HsE?enablejsapi=1&mute=1" title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtubeVideo4" src="https://www.youtube.com/embed/cPmlSbU-HsE?enablejsapi=1&mute=1" title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+		<iframe id="youtubeVideo5" src="https://www.youtube.com/embed/cPmlSbU-HsE?enablejsapi=1&mute=1" title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        const youtubeVideos = document.querySelectorAll('iframe[id^="youtubeVideo"]');
+        const mp4Video = document.getElementById('mp4Video');
+        const togglePlayButton = document.getElementById('togglePlay');
+        const rewindButton = document.getElementById('rewind');
+        const fastForwardButton = document.getElementById('fastForward');
+        const fullscreenButton = document.getElementById('fullscreen');
+        const currentTimeDisplay = document.getElementById('currentTime');
+
+        // Mute YouTube videos on load
+        youtubeVideos.forEach(video => {
+            video.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+        });
+
+        mp4Video.addEventListener('play', () => {
+            youtubeVideos.forEach(video => {
+                video.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            });
+        });
+
+        mp4Video.addEventListener('pause', () => {
+            youtubeVideos.forEach(video => {
+                video.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            });
+        });
+
+        mp4Video.addEventListener('timeupdate', () => {
+            const currentTime = Math.floor(mp4Video.currentTime);
+            const duration = Math.floor(mp4Video.duration);
+            currentTimeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        });
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function onYouTubePlayerAPIReady() {
+            youtubeVideos.forEach((video) => {
+                const player = new YT.Player(video.id, {
+                    events: {
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                mp4Video.play();
+            } else if (event.data === YT.PlayerState.PAUSED) {
+                mp4Video.pause();
+            }
+        }
+
+        togglePlayButton.addEventListener('click', () => {
+            if (mp4Video.paused) {
+                mp4Video.play();
+            } else {
+                mp4Video.pause();
+            }
+        });
+
+        rewindButton.addEventListener('click', () => {
+            mp4Video.currentTime = Math.max(0, mp4Video.currentTime - 10);
+        });
+
+        fastForwardButton.addEventListener('click', () => {
+            mp4Video.currentTime = Math.min(mp4Video.duration, mp4Video.currentTime + 10);
+        });
+
+        fullscreenButton.addEventListener('click', () => {
+            if (mp4Video.requestFullscreen) {
+                mp4Video.requestFullscreen();
+            } else if (mp4Video.mozRequestFullScreen) { // Firefox
+                mp4Video.mozRequestFullScreen();
+            } else if (mp4Video.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                mp4Video.webkitRequestFullscreen();
+            } else if (mp4Video.msRequestFullscreen) { // IE/Edge
+                mp4Video.msRequestFullscreen();
+            }
+        });
+
+        const script = document.createElement('script');
+        script.src = "https://www.youtube.com/iframe_api";
+        document.body.appendChild(script);
+    </script>
+
+</body>
+</html>
